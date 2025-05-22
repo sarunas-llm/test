@@ -1,0 +1,37 @@
+name: Sync Branches
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  dev-to-main:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create PR from dev to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: dev
+          title: 'Sync dev to main'
+          body: 'Automated PR to merge dev branch into main.'
+          delete-branch: false
+  main-to-dev:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create PR from main to dev
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: dev
+          branch: main
+          title: 'Sync main to dev'
+          body: 'Automated PR to merge main branch into dev.'
+          delete-branch: false
